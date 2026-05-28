@@ -15,7 +15,11 @@ import { Input } from '#/components/ui/input.tsx'
 import { authClient } from '#/lib/auth-client.ts'
 import { cn } from '#/lib/utils.ts'
 
-export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) {
+export function LoginForm({
+  redirect: redirectTo,
+  className,
+  ...props
+}: React.ComponentProps<'div'> & { redirect?: string }) {
   const emailId = useId()
   const passwordId = useId()
   const navigate = useNavigate()
@@ -43,7 +47,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
       return
     }
 
-    await navigate({ to: '/' })
+    await navigate({ to: redirectTo || '/' })
   }
 
   return (
@@ -121,7 +125,10 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
                 </Button>
               </Field>
               <FieldDescription className='text-center'>
-                Don&apos;t have an account? <Link to='/auth/signup'>Sign up</Link>
+                Don&apos;t have an account?{' '}
+                <Link to='/auth/signup' search={redirectTo ? { redirect: redirectTo } : {}}>
+                  Sign up
+                </Link>
               </FieldDescription>
             </FieldGroup>
           </form>

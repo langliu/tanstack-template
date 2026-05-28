@@ -27,13 +27,10 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '#/components/ui/sidebar.tsx'
+import { Skeleton } from '#/components/ui/skeleton.tsx'
+import { authClient } from '#/lib/auth-client.ts'
 
 const data = {
-  user: {
-    name: 'shadcn',
-    email: 'm@example.com',
-    avatar: '/avatars/shadcn.jpg',
-  },
   navMain: [
     {
       title: 'Playground',
@@ -152,6 +149,8 @@ const data = {
   ],
 }
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const { data: session, isPending } = authClient.useSession()
+
   return (
     <Sidebar variant='inset' {...props}>
       <SidebarHeader>
@@ -175,8 +174,24 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavSecondary items={data.navSecondary} className='mt-auto' />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        {isPending ? <NavUserSkeleton /> : session?.user ? <NavUser user={session.user} /> : null}
       </SidebarFooter>
     </Sidebar>
+  )
+}
+
+function NavUserSkeleton() {
+  return (
+    <SidebarMenu>
+      <SidebarMenuItem>
+        <SidebarMenuButton size='lg' disabled>
+          <Skeleton className='size-8 rounded-lg' />
+          <div className='grid flex-1 gap-1.5'>
+            <Skeleton className='h-4 w-24' />
+            <Skeleton className='h-3 w-32' />
+          </div>
+        </SidebarMenuButton>
+      </SidebarMenuItem>
+    </SidebarMenu>
   )
 }

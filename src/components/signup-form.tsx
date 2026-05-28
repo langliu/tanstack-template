@@ -15,7 +15,11 @@ import { Input } from '#/components/ui/input.tsx'
 import { authClient } from '#/lib/auth-client.ts'
 import { cn } from '#/lib/utils.ts'
 
-export function SignupForm({ className, ...props }: React.ComponentProps<'div'>) {
+export function SignupForm({
+  redirect: redirectTo,
+  className,
+  ...props
+}: React.ComponentProps<'div'> & { redirect?: string }) {
   const emailId = useId()
   const passwordId = useId()
   const confirmPasswordId = useId()
@@ -52,7 +56,7 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
       return
     }
 
-    await navigate({ to: '/' })
+    await navigate({ to: redirectTo || '/' })
   }
 
   return (
@@ -147,7 +151,10 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
                 </Button>
               </Field>
               <FieldDescription className='text-center'>
-                Already have an account? <Link to='/auth/login'>Sign in</Link>
+                Already have an account?{' '}
+                <Link to='/auth/login' search={redirectTo ? { redirect: redirectTo } : {}}>
+                  Sign in
+                </Link>
               </FieldDescription>
             </FieldGroup>
           </form>
